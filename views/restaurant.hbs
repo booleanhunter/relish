@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{restaurant.name}} - {{app_name}}</title>
+    <link rel="stylesheet" href="../stylesheets/chat.css" media="screen,print" >
+    <link rel="stylesheet" href="../stylesheets/restaurant.css" media="screen,print" >
+    <link rel="icon" href="../images/redis-avatar.png" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <meta name="description" content="{{restaurant.about}}">
+    <meta property="og:title" content="{{restaurant.name}} - {{app_name}}">
+    <meta property="og:description" content="{{restaurant.about}}">
+</head>
+<body class="neo-brutalist-theme">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <h1 class="site-logo">
+                    <i class="fas fa-utensils"></i>
+                    <a href="/app">{{app_name}}</a>
+                </h1>
+            </div>
+
+            <div class="header-actions">
+                <button onclick="history.back()" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> BACK
+                </button>
+                <div class="reservations-info">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="reservation-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Restaurant Details -->
+    <main class="restaurant-container">
+        <article class="restaurant-detail">
+            <figure class="restaurant-image-section">
+                <div class="restaurant-main-image">
+                    <!-- Fallback emoji based on cuisine -->
+                    <span class="restaurant-emoji">
+                        {{#if (eq restaurant.cuisine "North Indian")}}🍛{{/if}}
+                        {{#if (eq restaurant.cuisine "South Indian")}}🥘{{/if}}
+                        {{#if (eq restaurant.cuisine "Chinese")}}🥢{{/if}}
+                        {{#if (eq restaurant.cuisine "Italian")}}🍕{{/if}}
+                        {{#if (eq restaurant.cuisine "Continental")}}🍽️{{/if}}
+                        {{#if (eq restaurant.cuisine "Fast Food")}}🍔{{/if}}
+                        {{#unless restaurant.cuisine}}🍽️{{/unless}}
+                    </span>
+                </div>
+            </figure>
+
+            <div class="restaurant-info-section" data-restaurant-id="{{restaurant.id}}" data-restaurant-cuisine="{{restaurant.cuisine}}">
+                <header class="restaurant-header">
+                    <h2 class="restaurant-title">{{restaurant.name}}</h2>
+                    {{#if restaurant.locality}}
+                        <p class="restaurant-location">📍 {{restaurant.locality}}</p>
+                    {{/if}}
+                    {{#if restaurant.address}}
+                        <p class="restaurant-address">🏠 {{restaurant.address}}</p>
+                    {{/if}}
+
+                    <div class="restaurant-badges">
+                        <span class="cuisine-badge">{{restaurant.cuisine}}</span>
+                        {{#if restaurant.type}}
+                            <span class="type-badge">{{restaurant.type}}</span>
+                        {{/if}}
+                        {{#if restaurant.known_for}}
+                            <span class="specialty-badge">{{restaurant.known_for}}</span>
+                        {{/if}}
+                    </div>
+                </header>
+
+            <section class="restaurant-rating" aria-label="Restaurant Rating">
+                    {{#if restaurant.rating}}
+                        <div class="rating-stars">
+                            {{#repeat restaurant.rating}}⭐{{/repeat}}
+                            <span class="rating-text">{{restaurant.rating}}/5</span>
+                        </div>
+                    {{/if}}
+            </section>
+
+            <section class="restaurant-pricing" aria-label="Pricing Information">
+                    <div class="price-section">
+                        <data class="current-price" value="{{restaurant.price_for_2}}">₹{{restaurant.price_for_2}} for 2</data>
+                    </div>
+            </section>
+
+                {{#if restaurant.about}}
+                    <section class="restaurant-description" aria-labelledby="description-heading">
+                        <h3 id="description-heading">ABOUT</h3>
+                        <p>{{restaurant.about}}</p>
+                    </section>
+                {{/if}}
+
+                {{#if restaurant.facilities}}
+                    <section class="restaurant-facilities" aria-labelledby="facilities-heading">
+                        <h3 id="facilities-heading">FACILITIES</h3>
+                        <p>{{restaurant.facilities}}</p>
+                    </section>
+                {{/if}}
+
+                <form class="restaurant-actions" aria-label="Book Table">
+                    <fieldset class="guests-section">
+                        <legend>GUESTS:</legend>
+                        <div class="quantity-controls">
+                            <button type="button" class="quantity-btn" data-quantity-change="-1">-</button>
+                            <input type="number" id="guests" value="2" min="1" max="10" aria-label="Number of guests">
+                            <button type="button" class="quantity-btn" data-quantity-change="1">+</button>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="book-table-btn">
+                        <i class="fas fa-calendar-check"></i>
+                        BOOK TABLE
+                    </button>
+                </form>
+            </div>
+        </article>
+
+        <!-- Related Restaurants Section -->
+        <aside class="related-restaurants" aria-labelledby="related-heading">
+            <h3 id="related-heading">SIMILAR RESTAURANTS</h3>
+            <div id="related-restaurants-grid" class="restaurants-grid" role="list">
+                <!-- Related restaurants will be loaded here -->
+            </div>
+        </aside>
+    </main>
+
+    <!-- Success/Error Messages -->
+    <div id="notification-container"></div>
+
+    <script src="/javascripts/index-restaurant.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+/* Neo-Brutalist Restaurant Page Styles */
+
+/* CSS Variables - Same as Redish but adapted for restaurants */
+:root {
+    --primary: #FF6B35;     /* Orange-red for restaurants */
+    --secondary: #F7931E;   /* Golden orange */
+    --accent: #FFE66D;      /* Yellow accent */
+    --info: #4ECDC4;        /* Teal for info */
+    --success: #95E1D3;     /* Light green */
+    --warning: #F38BA8;     /* Pink warning */
+    --danger: #E63946;      /* Red danger */
+    --dark: #2D3436;        /* Dark text */
+    --text: #636E72;        /* Medium text */
+    --text-muted: #808080;  /* Muted text */
+    --light: #DDD6FE;       /* Light purple */
+    --white: #FFFFFF;       /* Pure white */
+    --background: #F8F9FA;  /* Light background */
+    --border: 3px solid #2D3436;
+    --shadow: 4px 4px 0px 0px #2D3436;
+    --shadow-hover: 6px 6px 0px 0px #2D3436;
+    --shadow-active: 2px 2px 0px 0px #2D3436;
+}
+
+/* Semantic HTML5 Element Resets */
+main, article, section, header, figure, aside, fieldset, legend {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+}
+
+legend {
+    padding: 0;
+    margin: 0;
+    display: block;
+}
+
+/* Font Imports and Base Styles */
+.neo-brutalist-theme {
+    font-family: 'Inter', 'Space Grotesk', sans-serif;
+    font-weight: 400;
+    line-height: 1.4;
+    background-color: var(--background);
+    color: var(--dark);
+}
+
+/* Restaurant Container */
+.restaurant-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+}
+
+/* Restaurant Detail Card */
+.restaurant-detail {
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Restaurant Image Section */
+.restaurant-image-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.restaurant-main-image {
+    background: var(--background);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.restaurant-emoji {
+    font-size: 8rem;
+    line-height: 1;
+}
+
+/* Restaurant Info Section */
+.restaurant-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Restaurant Header */
+.restaurant-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.restaurant-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3rem;
+    font-weight: 400;
+    color: var(--dark);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 0.9;
+    margin: 0;
+}
+
+.restaurant-location,
+.restaurant-address {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.restaurant-address {
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+/* Restaurant Badges */
+.restaurant-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.cuisine-badge,
+.type-badge,
+.specialty-badge {
+    background: var(--accent);
+    color: var(--dark);
+    border: var(--border);
+    padding: 0.5rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: var(--shadow);
+}
+
+.type-badge {
+    background: var(--info);
+}
+
+.specialty-badge {
+    background: var(--secondary);
+    color: var(--white);
+}
+
+/* Rating Section */
+.restaurant-rating {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.rating-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Pricing Section */
+.restaurant-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.price-section {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.current-price {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Description and Facilities Sections */
+.restaurant-description,
+.restaurant-facilities {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.restaurant-description h3,
+.restaurant-facilities h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.restaurant-description p,
+.restaurant-facilities p {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Restaurant Actions */
+.restaurant-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.guests-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.guests-section legend {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+}
+
+.quantity-btn {
+    background: var(--white);
+    border: var(--border);
+    color: var(--dark);
+    padding: 0.75rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: var(--shadow);
+    min-width: 3rem;
+    text-align: center;
+}
+
+.quantity-btn:hover {
+    background: var(--accent);
+    box-shadow: var(--shadow-hover);
+    transform: translate(-2px, -2px);
+}
+
+.quantity-btn:active {
+    box-shadow: var(--shadow-active);
+    transform: translate(2px, 2px);
+}
+
+#guests {
+    background: var(--white);
+    border: var(--border);
+    border-left: none;
+    border-right: none;
+    color: var(--dark);
+    padding: 0.75rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    width: 4rem;
+    outline: none;
+}
+
+.book-table-btn {
+    background: var(--primary);
+    border: var(--border);
+    color: var(--white);
+    padding: 1rem 2rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.book-table-btn:hover {
+    background: var(--secondary);
+    box-shadow: var(--shadow-hover);
+    transform: translate(-2px, -2px);
+}
+
+.book-table-btn:active {
+    box-shadow: var(--shadow-active);
+    transform: translate(2px, 2px);
+}
+
+/* Related Restaurants */
+.related-restaurants {
+    margin-top: 2rem;
+}
+
+.related-restaurants h3 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--dark);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.restaurants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+/* Back Button */
+.back-btn {
+    background: var(--white);
+    border: var(--border);
+    color: var(--dark);
+    padding: 0.75rem 1.5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.back-btn:hover {
+    background: var(--accent);
+    box-shadow: var(--shadow-hover);
+    transform: translate(-2px, -2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .restaurant-detail {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .restaurant-main-image {
+        max-width: 200px;
+        margin: 0 auto;
+    }
+
+    .restaurant-title {
+        font-size: 2rem;
+    }
+
+    .restaurant-emoji {
+        font-size: 6rem;
+    }
+
+    .restaurants-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .restaurant-container {
+        padding: 1rem;
+    }
+
+    .restaurant-title {
+        font-size: 1.5rem;
+    }
+
+    .restaurant-emoji {
+        font-size: 4rem;
+    }
+}

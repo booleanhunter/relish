@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{app_name}} - Restaurant Discovery & Reservations</title>
+    <link rel="stylesheet" href="./stylesheets/chat.css" media="screen,print" >
+    <link rel="icon" href="images/redis-avatar.png" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="{{app_name}} - Restaurant Discovery & Reservations">
+    <meta name="description" content="Discover amazing restaurants and book tables with AI dining assistant.">
+    <meta name="keywords" content="Restaurants, Dining, AI Assistant, Food, Reservations, Discovery">
+
+    <meta property="title" content="{{app_name}}">
+    <meta property="description" content="Discover amazing restaurants and book tables with AI dining assistant.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/booleanhunter/relish">
+    <meta property="og:title" content="{{app_name}} - Restaurant Discovery & Reservations">
+    <meta property="og:description" content="Discover amazing restaurants and book tables with AI dining assistant.">
+    <meta property="og:image" content="https://github.com/booleanhunter/relish/raw/main/images/redis-avatar.png">
+</head>
+<body class="neo-brutalist-theme">
+    <!-- Main Restaurant Discovery Website -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <h1 class="site-logo">
+                    <i class="fas fa-utensils"></i>
+                    {{app_name}}
+                </h1>
+                <span class="tagline">Discover • Dine • AI-powered</span>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="SEARCH FOR RESTAURANTS..." class="main-search" id="main-search">
+                <button class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="header-actions">
+                <div class="location-info">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{user.locality}}</span>
+                </div>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="username-display">Hi {{user.name}}</span>
+                </div>
+                <div class="reservations-info">
+                    <i class="fas fa-calendar-check"></i>
+                    <span class="reservation-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h2>🍽️ DISCOVER AMAZING RESTAURANTS</h2>
+            <p>FIND PERFECT DINING SPOTS, GET RECOMMENDATIONS, AND BOOK TABLES WITH OUR AI ASSISTANT!</p>
+            <div class="hero-features">
+                <div class="feature">
+                    <i class="fas fa-robot"></i>
+                    <span>AI DINING ASSISTANT</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>INSTANT RESERVATIONS</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-star"></i>
+                    <span>CURATED REVIEWS</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Restaurant Categories -->
+    <section class="categories-section">
+        <h3>BROWSE BY CUISINE</h3>
+        <div class="categories-grid">
+            <div class="category-card">
+                <i class="fas fa-pepper-hot"></i>
+                <span>NORTH INDIAN</span>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-leaf"></i>
+                <span>SOUTH INDIAN</span>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-pizza-slice"></i>
+                <span>ITALIAN</span>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-dragon"></i>
+                <span>CHINESE</span>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-hamburger"></i>
+                <span>FAST FOOD</span>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-wine-glass"></i>
+                <span>FINE DINING</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Restaurants -->
+    <section class="featured-section">
+        <h3>FEATURED RESTAURANTS</h3>
+        <div class="restaurants-grid">
+            <div class="restaurant-card">
+                <div class="restaurant-image">🍛</div>
+                <div class="restaurant-info">
+                    <h4>SPICE GARDEN</h4>
+                    <p class="restaurant-cuisine">NORTH INDIAN • ⭐ 4.5</p>
+                    <p class="restaurant-price">₹800 for 2
+                        <span class="location">Connaught Place</span>
+                    </p>
+                    <button class="book-btn">
+                        <i class="fas fa-calendar-check"></i>
+                        BOOK TABLE
+                    </button>
+                </div>
+            </div>
+            <div class="restaurant-card">
+                <div class="restaurant-image">🍕</div>
+                <div class="restaurant-info">
+                    <h4>PIZZA PARADISE</h4>
+                    <p class="restaurant-cuisine">ITALIAN • ⭐ 4.3</p>
+                    <p class="restaurant-price">₹600 for 2
+                        <span class="location">Khan Market</span>
+                    </p>
+                    <button class="book-btn">
+                        <i class="fas fa-calendar-check"></i>
+                        BOOK TABLE
+                    </button>
+                </div>
+            </div>
+            <div class="restaurant-card">
+                <div class="restaurant-image">🥘</div>
+                <div class="restaurant-info">
+                    <h4>CURRY HOUSE</h4>
+                    <p class="restaurant-cuisine">SOUTH INDIAN • ⭐ 4.7</p>
+                    <p class="restaurant-price">₹500 for 2
+                        <span class="location">Rajouri Garden</span>
+                    </p>
+                    <button class="book-btn">
+                        <i class="fas fa-calendar-check"></i>
+                        BOOK TABLE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Assistant (Floating) -->
+    <div class="chat-assistant" id="chatAssistant">
+        <!-- Chat Toggle Button -->
+        <button class="chat-toggle" id="chatToggle">
+            <i class="fas fa-robot"></i>
+            <span class="chat-bubble">NEED HELP FINDING A RESTAURANT? 🍽️</span>
+        </button>
+
+        <!-- Chat Window -->
+        <div class="chat-window-container" id="chatWindow">
+            <div class="chat-header">
+                <div class="assistant-info">
+                    <div class="assistant-avatar">🤖</div>
+                    <div>
+                        <h4>DINING ASSISTANT</h4>
+                        <span class="status">ONLINE • READY TO HELP!</span>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button id="end-session" class="end-session-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                    <button class="minimize-chat" id="minimizeChat">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-content">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="welcome-message">
+                        <div class="assistant-avatar">🤖</div>
+                        <div class="message-content">
+                            <p>Hi there! 👋 I'm your dining assistant!</p>
+                            <p>I can help you with:</p>
+                            <ul>
+                                <li>🍽️ Restaurant Recommendations</li>
+                                <li>🔍 Finding Perfect Dining Spots</li>
+                                <li>📅 Table Reservations</li>
+                                <li>🌟 Reviews & Ratings</li>
+                            </ul>
+                            <p>What type of cuisine are you craving today?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="chat-form" class="chat-input-form">
+                    <div class="input-container">
+                        <input
+                            type="text"
+                            id="chat-input"
+                            placeholder="Ask about restaurants, cuisines, or reservations..."
+                            autocomplete="off"
+                            required
+                        />
+                        <button type="submit" class="send-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="quick-suggestions">
+                        <button type="button" class="suggestion-btn" data-text="Find restaurants near me">
+                            🔍 FIND RESTAURANTS
+                        </button>
+                        <button type="button" class="suggestion-btn" data-text="Show my reservations">
+                            📅 MY RESERVATIONS
+                        </button>
+                        <button type="button" class="suggestion-btn" data-text="Find romantic dinner spots with live music">
+                            🎵 ROMANTIC DINING
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/javascripts/index.js" type="module"></script>
+    
+</body>
+</html>
