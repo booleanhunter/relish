@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { RestaurantService } from '../domain/restaurant-service.js';
+import { RestaurantService } from '#modules/restaurants/domain/restaurant-service.js';
 
-import { AppError, HttpStatusCode } from '../../../lib/errors.js';
+import { AppError, HttpStatusCode } from '#lib/errors.js';
 
 const router = Router();
 const restaurantService = new RestaurantService();

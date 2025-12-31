@@ -5,14 +5,14 @@ import { ChatOpenAI } from "@langchain/openai";
 import { z } from "zod";
 
 // Import service functions
-import { RestaurantService } from '../../restaurants/domain/restaurant-service.js';
-import { ReservationService } from '../../reservations/domain/reservation-service.js';
-import { UserService } from '../../users/domain/user-service.js';
+import { RestaurantService } from '#modules/restaurants/domain/restaurant-service.js';
+import { ReservationService } from '#modules/reservations/domain/reservation-service.js';
+import { UserService } from '#modules/users/domain/user-service.js';
 
 // Import helper functions
-import { AppError, HttpStatusCode } from '../../../lib/errors.js';
-import { generateEmbedding } from '../helpers/embeddings.js';
-import CONFIG from '../../../config.js';
+import { AppError, HttpStatusCode } from '#lib/errors.js';
+import { generateEmbedding } from '#modules/ai/helpers/embeddings.js';
+import CONFIG from '#config';
 
 const restaurantService = new RestaurantService();
 const reservationService = new ReservationService();

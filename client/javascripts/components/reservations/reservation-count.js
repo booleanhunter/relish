@@ -1,4 +1,4 @@
-import { loadReservationCount } from '../../services/reservationService.js';
+import { loadReservationCount } from '@services/reservationService.js';
 
 export class ReservationCount {
     constructor(selector = '.reservation-count') {

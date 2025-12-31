@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import CONFIG from '../config.js';
-import { UserService } from './users/domain/user-service.js';
+import CONFIG from '#config';
+import { UserService } from '#modules/users/domain/user-service.js';
 
 const router = Router();
 const userService = new UserService();

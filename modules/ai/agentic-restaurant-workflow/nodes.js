@@ -1,10 +1,10 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { AIMessage } from "@langchain/core/messages";
 import { restaurantTools } from "./tools.js";
-import { checkSemanticCache, saveToSemanticCache } from "../../chat/domain/chat-service.js";
-import { determineToolBasedCacheTTL, formatTTL } from "../helpers/caching.js";
-import { UserService } from "../../users/domain/user-service.js";
-import CONFIG from "../../../config.js";
+import { checkSemanticCache, saveToSemanticCache } from "#modules/chat/domain/chat-service.js";
+import { determineToolBasedCacheTTL, formatTTL } from "#modules/ai/helpers/caching.js";
+import { UserService } from "#modules/users/domain/user-service.js";
+import CONFIG from "#config";
 
 /**
  * Node 1: Query Cache Check

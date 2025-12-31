@@ -6,7 +6,7 @@ import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { RestaurantAgentState } from "./state.js";
 import { queryCacheCheck, restaurantDiscoveryAgent, processWorkOutputWithCaching } from "./nodes.js";
 
-import ChatRepository from "../../chat/data/chat-repository.js";
+import ChatRepository from "#modules/chat/data/chat-repository.js";
 
 const chatRepository = new ChatRepository();
 

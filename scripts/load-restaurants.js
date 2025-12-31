@@ -13,7 +13,7 @@
  *   npm run load-restaurants --recreate-index                   # Rebuild index and reload
  */
 
-import { loadRestaurantsFromCSV, checkRedisMemory } from '../modules/restaurants/data/restaurant-loader.js';
+import { loadRestaurantsFromCSV, checkRedisMemory } from '#modules/restaurants/data/restaurant-loader.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 

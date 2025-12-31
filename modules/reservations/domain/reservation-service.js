@@ -1,7 +1,7 @@
-import { ReservationRepository } from '../data/reservation-repository.js';
-import { UserService } from '../../users/domain/user-service.js';
-import { RestaurantService } from '../../restaurants/domain/restaurant-service.js';
-import { AppError, HttpStatusCode } from '../../../lib/errors.js';
+import { ReservationRepository } from '#modules/reservations/data/reservation-repository.js';
+import { UserService } from '#modules/users/domain/user-service.js';
+import { RestaurantService } from '#modules/restaurants/domain/restaurant-service.js';
+import { AppError, HttpStatusCode } from '#lib/errors.js';
 
 /**
  * Reservation Service - Business logic layer for reservation operations

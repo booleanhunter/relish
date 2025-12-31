@@ -1,5 +1,5 @@
-import { RestaurantRepository } from '../data/restaurant-repository.js';
-import { AppError, HttpStatusCode } from '../../../lib/errors.js';
+import { RestaurantRepository } from '#modules/restaurants/data/restaurant-repository.js';
+import { AppError, HttpStatusCode } from '#lib/errors.js';
 
 /**
  * Restaurant Service - Business logic layer for restaurant operations

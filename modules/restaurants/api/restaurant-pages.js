@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { RestaurantService } from '../domain/restaurant-service.js';
-import CONFIG from '../../../config.js';
+import { RestaurantService } from '#modules/restaurants/domain/restaurant-service.js';
+import CONFIG from '#config';
 
 const router = Router();
 const restaurantService = new RestaurantService();

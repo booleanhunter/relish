@@ -1,13 +1,13 @@
-import { SessionService } from './services/sessionService.js';
-import { bookTable } from './services/reservationService.js';
+import { SessionService } from '@services/sessionService.js';
+import { bookTable } from '@services/reservationService.js';
 
-import { ReservationCount } from './components/reservations/reservation-count.js';
-import { ReservationButton } from './components/reservations/reservation-button.js';
+import { ReservationCount } from '@components/reservations/reservation-count.js';
+import { ReservationButton } from '@components/reservations/reservation-button.js';
 
-import { NotificationSystem } from './components/notifications/notification-system.js';
+import { NotificationSystem } from '@components/notifications/notification-system.js';
 
-import { GuestQuantity } from './components/restaurants/guest-quantity.js';
-import { RelatedRestaurants } from './components/restaurants/related-restaurants.js';
+import { GuestQuantity } from '@components/restaurants/guest-quantity.js';
+import { RelatedRestaurants } from '@components/restaurants/related-restaurants.js';
 
 export class RestaurantApp {
     constructor(restaurantId, restaurantCuisine) {
@@ -114,10 +114,24 @@ export class RestaurantApp {
 
     handleBookingSuccess(result) {
         NotificationSystem.success(`✅ ${result.message}`);
-        this.reservationCount.update(result.reservationSummary.summary.totalReservations);
+        // Reload reservation count after successful booking
+        this.reservationCount.load(this.sessionId);
     }
 
     handleBookingError(error) {
         NotificationSystem.error('❌ Failed to book table. Please try again.');
     }
 }
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Extract restaurant info from page
+    const restaurantId = document.querySelector('[data-restaurant-id]')?.dataset.restaurantId ||
+                        new URLSearchParams(window.location.search).get('restaurantId') ||
+                        window.location.pathname.split('/').pop();
+
+    const restaurantCuisine = document.querySelector('[data-restaurant-cuisine]')?.dataset.restaurantCuisine;
+
+    // Initialize the restaurant app
+    window.restaurantApp = new RestaurantApp(restaurantId, restaurantCuisine);
+});

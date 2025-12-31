@@ -1,4 +1,4 @@
-import { bookTable } from '../../services/reservationService.js';
+import { bookTable } from '@services/reservationService.js';
 
 export class ReservationButton {
     constructor(onSuccess = null, onError = null) {

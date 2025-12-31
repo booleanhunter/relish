@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
-import CONFIG from '../../../config.js';
-import { AppError, HttpStatusCode } from '../../../lib/errors.js';
+import CONFIG from '#config';
+import { AppError, HttpStatusCode } from '#lib/errors.js';
 
 /**
  * Generate embeddings for restaurant descriptions

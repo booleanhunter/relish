@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
-import ChatRepository from '../data/chat-repository.js';
-import { runRestaurantAgentWorkflow } from '../../ai/agentic-restaurant-workflow/index.js';
-import CONFIG from '../../../config.js';
+import ChatRepository from '#modules/chat/data/chat-repository.js';
+import { runRestaurantAgentWorkflow } from '#modules/ai/agentic-restaurant-workflow/index.js';
+import CONFIG from '#config';
 
 const openaiClient = new OpenAI({
     apiKey: CONFIG.openAiApiKey,

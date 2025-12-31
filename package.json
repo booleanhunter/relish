@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#modules/*": "./modules/*",
+    "#lib/*": "./lib/*",
+    "#config": "./config.js"
+  },
   "scripts": {
     "start": "node index.js",
     "load-restaurants": "node scripts/load-restaurants.js",

@@ -5,15 +5,15 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { create } from 'express-handlebars';
 
-import CONFIG from './config.js';
-import { handleError } from './lib/errors.js';
+import CONFIG from '#config';
+import { handleError } from '#lib/errors.js';
 
-import indexRouter from './modules/index-routes.js';
+import indexRouter from '#modules/index-routes.js';
 // Module-based routes
-import reservationRouter from './modules/reservations/api/reservation-routes.js';
-import chatRouter from './modules/chat/api/chat-routes.js';
-import restaurantApiRouter from './modules/restaurants/api/restaurant-routes.js';
-import restaurantPagesRouter from './modules/restaurants/api/restaurant-pages.js';
+import reservationRouter from '#modules/reservations/api/reservation-routes.js';
+import chatRouter from '#modules/chat/api/chat-routes.js';
+import restaurantApiRouter from '#modules/restaurants/api/restaurant-routes.js';
+import restaurantPagesRouter from '#modules/restaurants/api/restaurant-pages.js';
 
 import { fileURLToPath } from 'url';
 

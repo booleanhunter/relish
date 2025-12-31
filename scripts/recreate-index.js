@@ -1,4 +1,4 @@
-import { createRestaurantIndex } from '../modules/restaurants/data/restaurant-loader.js';
+import { createRestaurantIndex } from '#modules/restaurants/data/restaurant-loader.js';
 
 async function main() {
     try {

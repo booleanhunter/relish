@@ -1,18 +1,18 @@
-import { sendChatMessage } from './services/chatService.js';
-import { DOM_IDS, CSS_SELECTORS } from './utils/constants.js';
+import { sendChatMessage } from '@services/chatService.js';
+import { DOM_IDS, CSS_SELECTORS } from '@utils/constants.js';
 
-import { ChatWindow } from './components/chat/chat-window/chat-window.js';
-import { ChatInput } from './components/chat/chat-input/chat-input.js';
-import { SuggestionButtons } from './components/chat/chat-input/suggestion-buttons.js';
-import { ChatToggle } from './components/chat/chat-toggle.js';
+import { ChatWindow } from '@components/chat/chat-window/chat-window.js';
+import { ChatInput } from '@components/chat/chat-input/chat-input.js';
+import { SuggestionButtons } from '@components/chat/chat-input/suggestion-buttons.js';
+import { ChatToggle } from '@components/chat/chat-toggle.js';
 
-import { ReservationCount } from './components/reservations/reservation-count.js';
-import { ReservationButton } from './components/reservations/reservation-button.js';
+import { ReservationCount } from '@components/reservations/reservation-count.js';
+import { ReservationButton } from '@components/reservations/reservation-button.js';
 
-import { SearchBar } from './components/search/search-bar.js';
-import { RestaurantCard } from './components/restaurants/restaurant-card.js';
-import { NotificationSystem } from './components/notifications/notification-system.js';
-import { SessionManager } from './components/session/session-manager.js';
+import { SearchBar } from '@components/search/search-bar.js';
+import { RestaurantCard } from '@components/restaurants/restaurant-card.js';
+import { NotificationSystem } from '@components/notifications/notification-system.js';
+import { SessionManager } from '@components/session/session-manager.js';
 
 export class RestaurantApp {
     constructor() {
@@ -141,3 +141,8 @@ export class RestaurantApp {
         }
     }
 }
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    window.restaurantApp = new RestaurantApp();
+});

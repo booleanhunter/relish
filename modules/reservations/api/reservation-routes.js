@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { ReservationService } from '../domain/reservation-service.js';
-import { AppError, HttpStatusCode } from '../../../lib/errors.js';
+import { ReservationService } from '#modules/reservations/domain/reservation-service.js';
+import { AppError, HttpStatusCode } from '#lib/errors.js';
 const router = Router();
 const reservationService = new ReservationService();
 

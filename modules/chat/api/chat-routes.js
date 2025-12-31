@@ -5,7 +5,7 @@ import {
     getChatHistory,
     checkSemanticCache,
     saveToSemanticCache,
-} from '../domain/chat-service.js';
+} from '#modules/chat/domain/chat-service.js';
 
 const router = Router();
 

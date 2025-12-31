@@ -25,6 +25,17 @@
     <meta property="og:title" content="{{app_name}} - Restaurant Discovery & Reservations">
     <meta property="og:description" content="Discover amazing restaurants and book tables with AI dining assistant.">
     <meta property="og:image" content="https://github.com/booleanhunter/relish/raw/main/images/redis-avatar.png">
+
+    <!-- Import Maps for Client-Side Module Resolution -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@components/": "/javascripts/components/",
+            "@services/": "/javascripts/services/",
+            "@utils/": "/javascripts/utils/"
+        }
+    }
+    </script>
 </head>
 <body class="neo-brutalist-theme">
     <!-- Main Restaurant Discovery Website -->
@@ -237,7 +248,7 @@
         </div>
     </div>
 
-    <script src="/javascripts/index.js" type="module"></script>
+    <script src="/javascripts/home-page.js" type="module"></script>
     
 </body>
 </html>

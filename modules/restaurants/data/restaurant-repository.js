@@ -1,6 +1,6 @@
 import { createClient } from 'redis';
-import { AppError, HttpStatusCode } from '../../../lib/errors.js';
-import CONFIG from '../../../config.js';
+import { AppError, HttpStatusCode } from '#lib/errors.js';
+import CONFIG from '#config';
 
 const client = await createClient({
     url: CONFIG.redisUrl,
