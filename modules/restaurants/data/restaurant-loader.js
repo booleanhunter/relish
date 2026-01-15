@@ -242,7 +242,7 @@ export async function loadRestaurantsFromCSV(csvFilePath, batchSize = 50, maxRes
                     ...restaurantData,
                     restaurantInfoEmbeddings: JSON.stringify(embedding),
                 };
-                pipeline.hset(`restaurants:${restaurant.id}`, flatData);
+                pipeline.hSet(`restaurants:${restaurant.id}`, flatData);
 
                 cuisines.add(restaurant.cuisine);
                 if (restaurant.city) cities.add(restaurant.city);
