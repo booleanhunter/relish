@@ -71,14 +71,7 @@ export const restaurantDiscoveryAgent = async (state) => {
 
 ${preferences.length > 0 ? `**PERSONALIZATION:** When relevant, acknowledge the user's preferences in your response. Use phrases like "Based on your preference for..." or "Since you prefer..." to show that you're considering their preferences.` : ''}
 
-**semantic_search_restaurants**: UNIFIED RESTAURANT SEARCH (USE THIS FOR ALL RESTAURANT SEARCHES!)
-- Use for ANY restaurant search query: descriptive, location-based, filtered, or general
-- Handles semantic search: "romantic dinner with live music", "cozy Italian restaurant"
-- Handles location search: "restaurants near me" (automatically uses user's profile location)
-- Handles filtered search: "Italian restaurants under ₹2000", "highly rated Chinese food"
-- Handles general search: "good restaurants", "Italian food", "dinner options"
-- Automatically applies filters: cuisine, city, price, rating, location radius
-- Smart retry logic: removes restrictive filters if no results found
+**find_restaurants**: Use for ANY restaurant search query: descriptive, location-based, filtered, or general
 - Format each restaurant as: **Restaurant Name** - Description (ID: rest123)
 - Always offer: "Want to make a reservation at any of these places?"
 - Example: ANY restaurant search → Use this tool!
@@ -88,12 +81,6 @@ ${preferences.length > 0 ? `**PERSONALIZATION:** When relevant, acknowledge the 
 - Use when user wants "more details" about a restaurant from previous results
 - Returns detailed info including menu, hours, contact, reviews
 - Format: Show comprehensive restaurant profile with reservation option
-
-**get_popular_restaurants**: For trending/top-rated requests (BACKUP ONLY)
-- Use ONLY when semantic_search_restaurants fails or for very general "popular" requests
-- Use when user asks for "popular", "trending", "top-rated" without any other criteria
-- Returns highly-rated restaurants across categories
-- Format: Show popular picks with ratings and reservation options
 
 **make_reservation**: For booking tables
 - Use when user wants to "book", "reserve", "make reservation"
@@ -121,7 +108,7 @@ ${preferences.length > 0 ? `**PERSONALIZATION:** When relevant, acknowledge the 
 - General culinary knowledge (not specific restaurant searches!)
 
 **CRITICAL Tool Selection Rules:**
-1. ANY restaurant search → ALWAYS use semantic_search_restaurants FIRST (it handles everything!)
+1. ANY restaurant search → ALWAYS use find_restaurants (it handles everything!)
 2. Specific restaurant info by name/ID → get_restaurant_details
 3. Booking requests → make_reservation (auto-fills customer details from profile)
 4. View reservations → get_user_reservations (shows user's booking history)
@@ -129,7 +116,6 @@ ${preferences.length > 0 ? `**PERSONALIZATION:** When relevant, acknowledge the 
    a) FIRST: get_user_reservations (to get valid reservation IDs)
    b) THEN: cancel_reservation (with exact ID from step a)
 6. General dining knowledge → direct_answer
-7. Popular restaurants (backup only) → get_popular_restaurants (only if semantic search fails)
 
 **CANCELLATION WORKFLOW (MANDATORY):**
 - User says "cancel my reservation" → FIRST call get_user_reservations
@@ -152,6 +138,8 @@ ${preferences.length > 0 ? `**PERSONALIZATION:** When relevant, acknowledge the 
 10. IMPORTANT: Do NOT create markdown links with # or (). Restaurant IDs should be plain like (ID: rest123)
 
 Session ID: ${state.sessionId}
+${userProfile && `User's Name: ${userProfile.name}`}
+
 Make responses helpful, engaging, and easy to interact with!`;
 
     const modelWithTools = model.bindTools(restaurantTools);
@@ -207,12 +195,10 @@ Make responses helpful, engaging, and easy to interact with!`;
                         error = parsedResult.error;
 
                         // Extract restaurants for summary based on tool name
-                        if (toolCall.name === "semantic_search_restaurants" && parsedResult.restaurants) {
+                        if (toolCall.name === "find_restaurants" && parsedResult.restaurants) {
                             foundRestaurants = parsedResult.restaurants;
                         } else if (toolCall.name === "get_restaurant_details" && parsedResult.restaurant) {
                             foundRestaurants = [parsedResult.restaurant];
-                        } else if (toolCall.name === "get_popular_restaurants" && parsedResult.restaurants) {
-                            foundRestaurants = parsedResult.restaurants;
                         }
                     } catch (parseError) {
                         console.warn("Could not parse tool result as JSON:", parseError);
@@ -281,8 +267,14 @@ export const processWorkOutputWithCaching = async (state) => {
             };
         }
 
+        // Use LLM-based GDPR sanitization
+        const [sanitizedQuery, sanitizedResponse ] =  await Promise.all([
+            dataComplianceAgent(userQuery),
+            dataComplianceAgent(state.result)
+        ]);
+
         // Save to semantic cache
-        await saveToSemanticCache(userQuery, agentResponse, cacheTTL, state.sessionId);
+        await saveToSemanticCache(sanitizedQuery, sanitizedResponse, cacheTTL, state.sessionId);
 
         console.log(`✅ Response cached for ${formatTTL(cacheTTL)}`);
 
@@ -307,3 +299,48 @@ export const processWorkOutputWithCaching = async (state) => {
         };
     }
 };
+
+/**
+ * LLM-based GDPR-compliant data sanitization
+ * Uses AI to intelligently remove personal information while preserving the core query
+ */
+async function dataComplianceAgent(text) {
+    if (!text || typeof text !== 'string') return text;
+
+    try {
+        const model = new ChatOpenAI({
+            temperature: 0,
+            model: CONFIG.modelName,
+            apiKey: CONFIG.openAiApiKey
+        });
+
+        const sanitizationPrompt = `You are a GDPR compliance assistant. Your task is to remove or anonymize any personal information from the given text while preserving the core meaning and context.
+
+Remove or replace the following types of personal information:
+- Names (first names, last names, usernames)
+- Email addresses
+- Phone numbers
+- Addresses (street addresses, zip codes)
+- Credit card numbers, SSNs, or other ID numbers
+- Any preferences, special requests and details that are more about individual user themselves
+- Any other personally identifiable information
+
+IMPORTANT: Keep all restaurant-related terms, restaurant names, cuisine types, locations (cities/localities), food items, dining preferences, and the core question intact. Only remove personal identifiers and details that are more about individual user themselves.
+
+Examples:
+- "Hi, my name is John, I want Italian restaurants in Delhi" → "I want Italian restaurants in Delhi"
+- "I'm Sarah and I live at 123 Main St, find romantic restaurants nearby" → "find romantic restaurants nearby"
+- "My email is test@email.com, show me fine dining options" → "show me fine dining options"
+
+Text to sanitize: "${text}"
+
+Return only the sanitized text with no additional explanation:`;
+
+        const response = await model.invoke(sanitizationPrompt);
+        return response.content.trim();
+
+    } catch (error) {
+        console.error('Error in LLM sanitization, using original text:', error);
+        return text; // Fallback to original text if LLM fails
+    }
+}

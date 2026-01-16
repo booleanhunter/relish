@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Seed script to create 5 dummy users with enhanced profile data
- * Creates users: ashwin, hariharan, iyer, kyle, banker
+ * Seed script to create 6 dummy users with enhanced profile data
+ * Creates users: foodie (default), ashwin, hariharan, iyer, kyle, banker
  */
 
 import { createClient } from 'redis';
@@ -15,7 +15,6 @@ const client = await createClient({
 
 async function seedDummyUsers() {
     console.log('🌱 SEEDING DUMMY USERS WITH ENHANCED PROFILES');
-    console.log('=' * 50);
 
     try {
         // Clear existing user data first
@@ -26,8 +25,30 @@ async function seedDummyUsers() {
             console.log(`✅ Cleared ${existingUserKeys.length} existing user sessions`);
         }
 
-        // Define the 5 dummy users with realistic data
+        // Define the 6 dummy users with realistic data (including default 'foodie' user)
         const users = [
+            {
+                sessionId: "foodie",
+                chat: {
+                    "main_chat": []
+                },
+                profile: {
+                    name: "Foodie",
+                    email: "foodie@example.com",
+                    phone: "+91-9999999999",
+                    locality: "Hauz Khas",
+                    latitude: 28.5494,
+                    longitude: 77.2001,
+                    preferences: [
+                        "loves exploring new restaurants",
+                        "enjoys diverse cuisines",
+                        "prefers highly rated places",
+                        "likes both vegetarian and non-vegetarian"
+                    ]
+                },
+                createdAt: "2025-11-13T11:34:41.771Z",
+                updatedAt: "2025-11-13T11:34:44.725Z"
+            },
             {
                 sessionId: "ashwin",
                 chat: {
@@ -150,6 +171,8 @@ async function seedDummyUsers() {
 
         console.log('\n🎉 DUMMY USERS SEEDED SUCCESSFULLY!');
         console.log('\nYou can now visit:');
+        console.log('• http://localhost:3000/ (default: foodie)');
+        console.log('• http://localhost:3000/?name=foodie');
         console.log('• http://localhost:3000/?name=ashwin');
         console.log('• http://localhost:3000/?name=hariharan');
         console.log('• http://localhost:3000/?name=iyer');

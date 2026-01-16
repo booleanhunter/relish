@@ -34,54 +34,47 @@ export async function createRestaurantIndex(forceRecreate = false) {
         }
 
         await client.ft.create('restaurants:search', {
-            '$.name': {
+            'name': {
                 type: SCHEMA_FIELD_TYPE.TEXT,
                 SORTABLE: true,
-                AS: 'name',
             },
-            '$.about': {
+            'about': {
                 type: SCHEMA_FIELD_TYPE.TEXT,
-                AS: 'about',
             },
-            '$.cuisine': {
+            'cuisine': {
                 type: SCHEMA_FIELD_TYPE.TAG,
-                AS: 'cuisine',
                 SEPARATOR: ',',
             },
-            '$.city': {
+            'city': {
                 type: SCHEMA_FIELD_TYPE.TAG,
-                AS: 'city',
             },
-            '$.locality': {
+            'locality': {
                 type: SCHEMA_FIELD_TYPE.TAG,
-                AS: 'locality',
             },
-            '$.type': {
+            'type': {
                 type: SCHEMA_FIELD_TYPE.TAG,
-                AS: 'type',
             },
-            '$.priceFor2': {
+            'priceFor2': {
                 type: SCHEMA_FIELD_TYPE.NUMERIC,
-                AS: 'priceFor2',
+                SORTABLE: true,
             },
-            '$.rating': {
+            'rating': {
                 type: SCHEMA_FIELD_TYPE.NUMERIC,
-                AS: 'rating',
+                SORTABLE: true,
             },
-            '$.lngLat': {
+            'lngLat': {
                 type: SCHEMA_FIELD_TYPE.GEO,
-                AS: 'lngLat',
             },
-            '$.restaurantInfoEmbeddings': {
+            'restaurantInfoEmbeddings': {
                 type: SCHEMA_FIELD_TYPE.VECTOR,
-                TYPE: 'FLOAT32',
                 AS: 'embedding',
+                TYPE: 'FLOAT32',
                 ALGORITHM: SCHEMA_VECTOR_FIELD_ALGORITHM.HNSW,
                 DISTANCE_METRIC: 'L2',
                 DIM: 1536,
             }
         }, {
-            ON: 'JSON',
+            ON: 'HASH',
             PREFIX: 'restaurants:',
         });
         console.log('✅ Restaurant search index with geospatial support created successfully');
@@ -237,10 +230,10 @@ export async function loadRestaurantsFromCSV(csvFilePath, batchSize = 50, maxRes
                     restaurantInfoEmbeddings: embedding,
                 };
 
-                // Use HSET instead of JSON.SET for compatibility
+                // Store embedding as Buffer for vector search
                 const flatData = {
                     ...restaurantData,
-                    restaurantInfoEmbeddings: JSON.stringify(embedding),
+                    restaurantInfoEmbeddings: Buffer.from(new Float32Array(embedding).buffer),
                 };
                 pipeline.hSet(`restaurants:${restaurant.id}`, flatData);
 

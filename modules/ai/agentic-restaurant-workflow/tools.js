@@ -7,112 +7,44 @@ import { z } from "zod";
 // Import service functions
 import { RestaurantService } from '#modules/restaurants/domain/restaurant-service.js';
 import { ReservationService } from '#modules/reservations/domain/reservation-service.js';
-import { UserService } from '#modules/users/domain/user-service.js';
 
 // Import helper functions
 import { AppError, HttpStatusCode } from '#lib/errors.js';
-import { generateEmbedding } from '#modules/ai/helpers/embeddings.js';
 import CONFIG from '#config';
 
 const restaurantService = new RestaurantService();
 const reservationService = new ReservationService();
-const userService = new UserService();
 
 /**
- * Tool: Unified Restaurant Search
- * Primary search tool that handles semantic search, location-based search, and all filters
+ * Tool: Find Restaurants
+ * Primary tool for finding restaurants with filters
  */
-export const semanticSearchRestaurantsTool = tool(
-    async ({ query, latitude, longitude, radius, cuisine, city, locality, type, maxPrice, minRating, limit, useSemanticSearch = true }) => {
-        console.log(`🔍 Searching restaurants: "${query}"`);
-
+export const findRestaurantsTool = tool(
+    async (args) => {
         try {
-            const maxResults = limit ? parseInt(limit) : 15;
+            // Call service with all arguments (service handles user location, embedding generation, and fallbacks)
+            const result = await restaurantService.findRestaurants(args);
 
-            let result;
-
-            // Primary search with all filters
-            if (query && useSemanticSearch) {
-                console.log(`Using semantic search with filters...`);
-                const embedding = await generateEmbedding(query);
-
-                result = await restaurantService.vectorSearchRestaurants(embedding, {
-                    latitude: latitude ? parseFloat(latitude) : undefined,
-                    longitude: longitude ? parseFloat(longitude) : undefined,
-                    radius: radius ? parseFloat(radius) : 15,
-                    cuisine,
-                    city,
-                    locality,
-                    type,
-                    maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-                    minRating: minRating ? parseFloat(minRating) : undefined,
-                    limit: maxResults * 2, // Get more results for filtering
-                });
-            } else if (latitude && longitude) {
-                console.log(`📍 Using location-based search...`);
-                result = await restaurantService.findNearbyRestaurants({
-                    latitude: parseFloat(latitude),
-                    longitude: parseFloat(longitude),
-                    radius: radius ? parseFloat(radius) : 15,
-                    cuisine,
-                    city,
-                    maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-                    minRating: minRating ? parseFloat(minRating) : undefined,
-                    limit: maxResults,
-                });
-            } else {
-                console.log(`🌟 Fallback to popular restaurants...`);
-                result = await restaurantService.getPopularRestaurants({ city, limit: maxResults, cuisine });
-            }
-
-            // Retry logic - remove cuisine filter if no results
-            if (result.restaurants.length === 0 && cuisine) {
-                console.log(`🔄 No results with cuisine "${cuisine}", retrying without cuisine filter...`);
-
-                if (query && useSemanticSearch) {
-                    const embedding = await generateEmbedding(query);
-                    result = await restaurantService.vectorSearchRestaurants(embedding, {
-                        latitude: latitude ? parseFloat(latitude) : undefined,
-                        longitude: longitude ? parseFloat(longitude) : undefined,
-                        radius: radius ? parseFloat(radius) : 15,
-                        city,
-                        locality,
-                        type,
-                        maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-                        minRating: minRating ? parseFloat(minRating) : undefined,
-                        limit: maxResults * 2,
-                    });
-                } else if (latitude && longitude) {
-                    result = await restaurantService.findNearbyRestaurants({
-                        latitude: parseFloat(latitude),
-                        longitude: parseFloat(longitude),
-                        radius: radius ? parseFloat(radius) : 15,
-                        city,
-                        maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-                        minRating: minRating ? parseFloat(minRating) : undefined,
-                        limit: maxResults,
-                    });
-                }
-            }
-
-            // Final fallback to popular restaurants
-            if (result.restaurants.length === 0) {
-                console.log(`🔄 No specific results found, showing popular restaurants, limit is...`, maxResults);
-                result = await restaurantService.getPopularRestaurants({ city, limit: maxResults });
-            }
-
-            // Limit final results
-            const finalRestaurants = result.restaurants;
-
+            // Format response as JSON string for LangChain
             return JSON.stringify({
-                success: finalRestaurants.length > 0,
-                query: query,
-                searchStrategy: query && useSemanticSearch ? "semantic" : (latitude && longitude ? "location" : "popular"),
-                totalFound: finalRestaurants.length,
-                restaurants: finalRestaurants,
-                searchParams: { query, location: !!(latitude && longitude), filters: { cuisine, city, locality, type, maxPrice, minRating } },
-                message: finalRestaurants.length > 0
-                    ? `Found ${finalRestaurants.length} restaurants matching your preferences.`
+                success: result.restaurants.length > 0,
+                query: args.query,
+                totalFound: result.totalFound,
+                restaurants: result.restaurants,
+                searchParams: {
+                    query: args.query,
+                    location: !!(result.filters.latitude && result.filters.longitude),
+                    filters: {
+                        cuisine: args.cuisine,
+                        city: args.city,
+                        locality: args.locality,
+                        type: args.type,
+                        maxPrice: args.maxPrice,
+                        minRating: args.minRating
+                    }
+                },
+                message: result.restaurants.length > 0
+                    ? `Found ${result.restaurants.length} restaurants matching your preferences.`
                     : `No restaurants found matching your criteria. Try different keywords or filters.`,
             });
 
@@ -125,123 +57,22 @@ export const semanticSearchRestaurantsTool = tool(
         }
     },
     {
-        name: "semantic_search_restaurants",
-        description: "🍽️ UNIFIED RESTAURANT SEARCH - Primary search tool for all restaurant queries! Handles semantic search, location-based search, and filters. Use for ANY restaurant search query.",
+        name: "find_restaurants",
+        description: "Primary tool for finding restaurants. Handles all restaurant queries with text search, location-based search, and filters. Use for ANY restaurant search query.",
         schema: z.object({
-            query: z.string().describe("Search query (e.g., 'romantic dinner with live music', 'Italian restaurant', 'good food')"),
-            latitude: z.string().optional().describe("Latitude coordinate for location-based search"),
-            longitude: z.string().optional().describe("Longitude coordinate for location-based search"),
-            radius: z.string().optional().describe("Search radius in kilometers (default: 5)"),
+            query: z.string().optional().describe("Search query (e.g., 'romantic dinner with live music', 'Italian restaurant', 'good food')"),
+            sessionId: z.string().optional().describe("User session ID"),
+            latitude: z.number().optional().describe("Latitude coordinate for location-based search"),
+            longitude: z.number().optional().describe("Longitude coordinate for location-based search"),
+            radius: z.number().optional().describe("Search radius in kilometers (default: 15)"),
             cuisine: z.string().optional().describe("Cuisine filter (e.g., 'Italian', 'Chinese', 'Indian')"),
             city: z.string().optional().describe("City filter (e.g., 'Delhi', 'Mumbai')"),
             locality: z.string().optional().describe("Locality filter (e.g., 'Khan Market', 'Connaught Place')"),
             type: z.string().optional().describe("Restaurant type filter (e.g., 'Fine Dining', 'Casual Dining', 'Quick Bites')"),
-            maxPrice: z.string().optional().describe("Maximum price for 2 people"),
-            minRating: z.string().optional().describe("Minimum rating filter (e.g., '4.0')"),
-            limit: z.string().optional().describe("Maximum number of results (default: 5, max: 10)"),
-            useSemanticSearch: z.boolean().optional().describe("Use semantic search for descriptive queries (default: true)"),
+            maxPrice: z.number().optional().describe("Maximum price for 2 people"),
+            minRating: z.number().optional().describe("Minimum rating filter (e.g., 4.0)"),
+            limit: z.number().optional().describe("Maximum number of results (default: 15, max: 50)"),
         })
-    }
-);
-
-/**
- * Tool: Find Nearby Restaurants
- * Find restaurants near user's location from their profile
- */
-export const findNearbyRestaurantsTool = tool(
-    async ({ sessionId, radius, limit }) => {
-        console.log(`📍 Finding restaurants near user's location for session: ${sessionId}`);
-
-        try {
-            // Get user location from profile
-            const userLocation = await userService.getUserLocation(sessionId);
-
-            if (!userLocation) {
-                return JSON.stringify({
-                    success: false,
-                    error: "Sorry, I don't have your location information. Please make sure your profile is set up correctly.",
-                });
-            }
-
-            const radiusKm = radius ? parseFloat(radius) : 5;
-            const maxResults = limit ? parseInt(limit) : 10;
-
-            const result = await restaurantService.getRestaurantsByLocation(
-                userLocation.latitude,
-                userLocation.longitude,
-                radiusKm,
-                maxResults,
-            );
-
-            return JSON.stringify({
-                success: true,
-                restaurants: result.restaurants,
-                searchCenter: {
-                    latitude: userLocation.latitude,
-                    longitude: userLocation.longitude,
-                    locality: userLocation.locality,
-                },
-                radiusKm: radiusKm,
-                message: `Found ${result.restaurants.length} restaurants within ${radiusKm}km of your location in ${userLocation.locality}.`,
-            });
-
-        } catch (error) {
-            console.error('Error finding nearby restaurants:', error);
-            return JSON.stringify({
-                success: false,
-                error: `Sorry, I had trouble finding restaurants near your location. Please try again.`,
-            });
-        }
-    },
-    {
-        name: "find_nearby_restaurants",
-        description: "📍 LOCATION-BASED SEARCH - Find restaurants near the user's location from their profile. Use when user asks 'restaurants near me' or wants location-based recommendations. Automatically uses their saved location.",
-        schema: z.object({
-            sessionId: z.string().describe("User session ID to fetch location from profile"),
-            radius: z.string().optional().describe("Search radius in kilometers (default: 5, max: 20)"),
-            limit: z.string().optional().describe("Maximum number of results (default: 10, max: 20)"),
-        })
-    }
-);
-
-/**
- * Tool: Get Popular Restaurants
- * Get popular restaurants with optional filters
- */
-export const getPopularRestaurantsTool = tool(
-    async ({ limit, city, cuisine }) => {
-        console.log(`⭐ Getting popular restaurants`);
-
-        try {
-            const options = {
-                limit: limit ? parseInt(limit) : 10,
-                city,
-                cuisine,
-            };
-            const result = await restaurantService.getPopularRestaurants(options);
-
-            return JSON.stringify({
-                success: true,
-                restaurants: result.restaurants,
-                message: `Here are the most popular restaurants${city ? ` in ${city}` : ''}${cuisine ? ` for ${cuisine} cuisine` : ''}.`,
-            });
-
-        } catch (error) {
-            console.error('Error getting popular restaurants:', error);
-            return JSON.stringify({
-                success: false,
-                error: `Sorry, I had trouble getting popular restaurants. Please try again.`,
-            });
-        }
-    },
-    {
-        name: "get_popular_restaurants",
-        description: "🌟 POPULAR RESTAURANTS - Get trending and top-rated restaurants. Use when user asks for 'popular', 'best', 'top-rated', 'trending', or 'what's hot'. Perfect for general recommendations without specific criteria.",
-        schema: z.object({
-            limit: z.string().optional().describe("Maximum number of results (default: 10, max: 20)"),
-            city: z.string().optional().describe("City filter (e.g., 'Delhi', 'Mumbai')"),
-            cuisine: z.string().optional().describe("Cuisine filter (e.g., 'Italian', 'Chinese')"),
-        }),
     }
 );
 
@@ -462,9 +293,8 @@ Keep responses helpful, informative, and concise. If the question requires speci
 
 // Export all tools as an array
 export const restaurantTools = [
-    semanticSearchRestaurantsTool,
+    findRestaurantsTool,
     getRestaurantDetailsTool,
-    getPopularRestaurantsTool,
     makeReservationTool,
     getUserReservationsTool,
     cancelReservationTool,

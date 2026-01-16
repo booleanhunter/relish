@@ -12,11 +12,12 @@ An AI-powered restaurant discovery platform that combines Redis's speed with Lan
 
 ## Tech Stack
 
-- **Node.js** + **Express** (Backend API)
-- **Redis** (Restaurant store, agentic AI memory, conversational history, and semantic caching with Redis LangCache)
-- **OpenAI API** (GPT-4 for intelligent responses and embeddings for vector search)
-- **LangGraph** (AI workflow orchestration)
-- **HTML + CSS + Vanilla JS** (Frontend)
+- **[Node.js (v18+)](https://nodejs.org/)** + **Express** - Backend runtime and API framework
+- **[Redis](https://redis.io)** - Restaurant store, agentic AI memory, conversational history, and semantic caching
+- **[Redis LangCache API](https://redis.io/langcache/)** - Semantic caching for LLM responses
+- **LangGraph** - AI workflow orchestration
+- **[OpenAI API](https://platform.openai.com/account/api-keys)** - GPT-4 for intelligent responses and embeddings for vector search
+- **HTML + CSS + Vanilla JS** - Frontend UI
 
 ---
 
@@ -36,38 +37,61 @@ An AI-powered restaurant discovery platform that combines Redis's speed with Lan
 
 ---
 
-## Setup
+## Getting started
 
-Follow the setup instructions below to get started.
+### 1. Configure environment variables
 
-### Prerequisites
+```bash
+cp .env.example .env
+# Edit .env with your Redis URL, OpenAI key, and LangCache credentials
+```
 
-- **Redis**: Use [Redis Cloud](https://redis.io) (no installation required)
-- **Redis LangCache API**: [Get LangCache credentials](https://redis.io/langcache)
-- **OpenAI API Key**: [Create an API key](https://platform.openai.com/account/api-keys)
-- **Node.js (v18 or higher)**: [Download & Install Node.js](https://nodejs.org/)
+### 2. Installation
 
-### Installation
+#### Option 1: Docker (Recommended)
 
-1. **Clone and setup**
+**Quick start:**
+```bash
+# Build and start
+docker compose build
+docker compose up -d
 
+# Load data (first time only)
+docker compose exec relish-app npm run load-restaurants
+docker compose exec relish-app npm run seed-dummy-users
+
+# View logs
+docker compose logs -f relish-app
+```
+
+**Subsequent runs:**
+```bash
+docker compose up
+```
+
+**To stop the service and remove containers:**
+```bash
+# Stop and remove containers
+docker compose down
+```
+
+#### Option 2: Manual setup
+
+1. Install dependencies:
    ```bash
-   git clone <repository-url>
-   cd relish
    npm install
    ```
 
-2. **Configure environment**
-
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Redis URL, OpenAI key, and LangCache credentials
-   ```
-
-3. **Load restaurant data**
+2. **Load restaurant data**
 
    ```bash
    npm run load-restaurants
+   ```
+
+3. **Load sample users**
+
+   ```bash
+   npm run seed-dummy-users
    ```
 
 4. **Start the server**
@@ -76,11 +100,9 @@ Follow the setup instructions below to get started.
    npm start
    ```
 
-5. **Open your browser**
+### 3. Access the app
 
-   ```
-   http://localhost:3000
-   ```
+Visit `http://localhost:3000/?name=ashwin` or any of the seeded users in your browser. Default port number can be customized via environment variables defined in the `.env` configuration file.
 
 ---
 
@@ -159,5 +181,29 @@ This project is licensed under the MIT License - see the [LICENSE](/LICENSE) fil
 ## 🐞 Reporting Issues
 
 If you find a bug or have a feature request, please open an issue in the repository.
+
+---
+
+## Motivations
+
+This project is a **learning-focused demonstration** designed to help developers understand:
+
+- **AI/ML Concepts**: Semantic search, vector embeddings, semantic caching, and agentic AI workflows
+- **Full-Stack AI Architecture**: How to organize AI applications using clean architecture principles and modular design patterns
+- **Integration Patterns**: Wiring together Redis, LangGraph, OpenAI, and LangCache in a real-world application
+
+**What this project focuses on:**
+- ✅ Semantic search and vector similarity
+- ✅ LLM-powered agentic workflows with tool calling
+- ✅ Semantic caching for performance optimization
+- ✅ Clean, modular architecture for full-stack AI applications
+
+**What this project does NOT focus on:**
+- ❌ Complete business logic (e.g., real reservation systems, payment processing)
+- ❌ Production-ready authentication/authorization
+
+The features in this app such as reservation and user management are **intentionally simplified** to focus on demonstrating AI workflows and architecture patterns.
+
+> 📖 **Read More**: Learn about the architectural principles in this [blog post](https://www.ashwinhariharan.com/organizing-ai-applications-lessons-from-traditional-software-architecture/).
 
 ---

@@ -8,7 +8,7 @@
  *   npm run load-restaurants --flush                            # Alias for --recreate-index
  *
  * Examples:
- *   npm run load-restaurants                                    # Load from phase2_working.csv
+ *   npm run load-restaurants                                    # Load from restaurants-dataset.csv
  *   npm run load-restaurants data.csv 50 5000                   # Custom file, batch size, limit
  *   npm run load-restaurants --recreate-index                   # Rebuild index and reload
  */
@@ -33,7 +33,7 @@ async function main() {
         // Filter out flags from arguments
         const args = process.argv.slice(2).filter(arg => !arg.startsWith('--'));
 
-        const csvFilePath = args[0] || join(__dirname, '../modules/restaurants/data/restaurants_phase2_working.csv');
+        const csvFilePath = args[0] || join(__dirname, '../modules/restaurants/data/restaurants-dataset.csv');
         const batchSize = parseInt(args[1]) || 100;
         const maxRestaurants = parseInt(args[2]) || 4000; // All restaurants from our dataset
 

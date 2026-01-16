@@ -49,8 +49,11 @@ export const getRestaurantWorkflowGraph = () => {
 };
 
 export function getWorkflowExecutionSummary(graphResult) {
+    // Extract tool names from toolResults array
+    const toolNames = (graphResult.toolResults || []).map(tr => tr.toolName);
+
     const summary = {
-        toolsUsed: graphResult.toolsUsed || ["none"],
+        toolsUsed: toolNames.length > 0 ? toolNames : ["none"],
         cacheStatus: graphResult.cacheStatus || "miss",
         finalResult: graphResult.result,
         sessionId: graphResult.sessionId,
@@ -67,12 +70,11 @@ export function getWorkflowExecutionSummary(graphResult) {
     } else {
         const toolIcons = summary.toolsUsed.map(tool => {
             switch(tool) {
-                case "direct_response": return "🧠 Direct Knowledge";
-                case "search_restaurants": return "🔍 Restaurant Search";
+                case "find_restaurants": return "🔍 Find Restaurants";
                 case "get_restaurant_details": return "🏪 Restaurant Details";
-                case "get_popular_restaurants": return "⭐ Popular Restaurants";
-                case "find_nearby_restaurants": return "📍 Nearby Search";
                 case "make_reservation": return "📅 Make Reservation";
+                case "get_user_reservations": return "📋 Get Reservations";
+                case "cancel_reservation": return "❌ Cancel Reservation";
                 case "direct_answer": return "🧠 Direct Answer";
                 case "error": return "❌ Error";
                 default: return `🔧 ${tool}`;

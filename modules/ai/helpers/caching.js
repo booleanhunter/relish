@@ -27,10 +27,9 @@ export function determineToolBasedCacheTTL(toolResults = []) {
         return 0; // Don't cache
     }
 
-    // Long TTL for static/popular content (changes rarely)
+    // Long TTL for static content (changes rarely)
     const staticTools = [
-        'get_popular_restaurants',  // Popular restaurants don't change often
-        'direct_answer'            // General knowledge is static
+        'direct_answer'  // General knowledge is static
     ];
 
     if (staticTools.some(tool => toolNames.includes(tool))) {
@@ -40,7 +39,7 @@ export function determineToolBasedCacheTTL(toolResults = []) {
 
     // Medium TTL for restaurant searches (restaurants don't change frequently)
     const searchTools = [
-        'semantic_search_restaurants'
+        'find_restaurants'
     ];
 
     if (searchTools.some(tool => toolNames.includes(tool))) {
