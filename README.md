@@ -146,13 +146,24 @@ Visit `http://localhost:3000/?name=ashwin` or any of the seeded users in your br
 ```
 ---
 
-## API Endpoints
+### API Endpoints
 
-- `POST /api/chat` - Main chat interface for AI restaurant assistant
-- `GET /api/restaurants/search` - Search restaurants with text/vector similarity
-- `POST /api/reservations/add` - Add restaurant reservations *(demo implementation)*
-- `GET /api/reservations` - View reservation history *(demo implementation)*
-- `DELETE /api/reservations` - Cancel reservations *(demo implementation)*
+#### AI Chat Endpoints
+- `POST /api/ai/chat` - Main chat interface for AI restaurant assistant
+- `POST /api/ai/chat/end-session` - End user session and clear chat history
+- `GET /api/ai/chat/history` - Get chat history for a session
+- `GET /api/ai/chat/cache-check` - Check semantic cache for a query
+
+#### Restaurant Endpoints
+- `GET /api/restaurants` - Unified restaurant search with text/vector similarity
+- `GET /api/restaurants/filters` - Get available filter options (cuisines, cities, localities, types)
+- `GET /api/restaurants/stats` - Get restaurant statistics
+
+#### Reservation Endpoints *(demo implementation)*
+- `POST /api/reservations/book` - Create a new reservation
+- `GET /api/reservations/:sessionId` - Get all reservations for a session
+- `GET /api/reservations/reservation/:reservationId` - Get specific reservation details
+- `PUT /api/reservations/:reservationId/cancel` - Cancel a reservation
 
 ---
 
