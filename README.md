@@ -12,7 +12,7 @@ An AI-powered restaurant discovery platform that combines Redis's speed with Lan
 
 ## Tech Stack
 
-- **[Node.js (v18+)](https://nodejs.org/)** + **Express** - Backend runtime and API framework
+- **[Node.js (v24+)](https://nodejs.org/)** + **Express** - Backend runtime and API framework
 - **[Redis](https://redis.io)** - Restaurant store, agentic AI memory, conversational history, and semantic caching
 - **[Redis LangCache API](https://redis.io/langcache/)** - Semantic caching for LLM responses
 - **LangGraph** - AI workflow orchestration
