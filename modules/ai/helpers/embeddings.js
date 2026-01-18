@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import CONFIG from '#config';
-import { AppError, HttpStatusCode } from '#lib/errors.js';
+import { AppError, ErrorType } from '#lib/errors.js';
 
 /**
  * Generate embeddings for restaurant descriptions
@@ -10,10 +10,12 @@ import { AppError, HttpStatusCode } from '#lib/errors.js';
 export async function generateEmbeddings(texts) {
     if (!CONFIG.openAiApiKey) {
         throw new AppError(
-            'ConfigurationError',
+            `ai.${ErrorType.INTERNAL_SERVER_ERROR}`,
             'OpenAI API key is not configured.',
-            HttpStatusCode.INTERNAL_SERVER_ERROR,
-            'AI service is unavailable.'
+            ErrorType.INTERNAL_SERVER_ERROR,
+            {
+                publicMessage: 'AI service is unavailable.'
+            }
         );
     }
 

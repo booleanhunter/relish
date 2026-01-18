@@ -1,4 +1,5 @@
 import * as fs from "node:fs/promises";
+import { AppError, ErrorType } from '#lib/errors.js';
 
 import { StateGraph, START, END } from "@langchain/langgraph";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
@@ -96,59 +97,48 @@ export function getWorkflowExecutionSummary(graphResult) {
  * Main function to execute the restaurant discovery workflow
  */
 export async function runRestaurantAgentWorkflow(sessionId, chatId, message, useSmartRecall) {
-    try {
-        const rawHistory = await chatRepository.getOrCreateChatHistory(sessionId, chatId);
+    const rawHistory = await chatRepository.getOrCreateChatHistory(sessionId, chatId);
 
-        // Convert raw history to LangChain message format
-        const messages = rawHistory.map((msg) => {
-            return msg.role === "user"
-                ? new HumanMessage(msg.content)
-                : new AIMessage(msg.content);
-        });
+    // Convert raw history to LangChain message format
+    const messages = rawHistory.map((msg) => {
+        return msg.role === "user"
+            ? new HumanMessage(msg.content)
+            : new AIMessage(msg.content);
+    });
 
-        // Add the new user message
-        const userMessage = new HumanMessage(message);
-        messages.push(userMessage);
+    // Add the new user message
+    const userMessage = new HumanMessage(message);
+    messages.push(userMessage);
 
-        // Run the restaurant discovery workflow graph
-        const workflowGraph = getRestaurantWorkflowGraph();
-        const result = await workflowGraph.invoke({
-            sessionId,
-            messages,
-        });
+    // Run the restaurant discovery workflow graph
+    const workflowGraph = getRestaurantWorkflowGraph();
+    const result = await workflowGraph.invoke({
+        sessionId,
+        messages,
+    });
 
-        // Get execution summary for logging
-        const executionSummary = getWorkflowExecutionSummary(result);
+    // Get execution summary for logging
+    const executionSummary = getWorkflowExecutionSummary(result);
 
-        const finalReply = result.result || result.output;
+    const finalReply = result.result || result.output;
 
-        const queryResult = {
-            isCachedResponse: result.cacheStatus === "hit",
-            content: finalReply,
-        };
+    const queryResult = {
+        isCachedResponse: result.cacheStatus === "hit",
+        content: finalReply,
+    };
 
-        // Save messages back to storage
-        await chatRepository.saveChatMessage(sessionId, chatId, {
-            role: "user",
-            content: message,
-        });
+    // Save messages back to storage
+    await chatRepository.saveChatMessage(sessionId, chatId, {
+        role: "user",
+        content: message,
+    });
 
-        await chatRepository.saveChatMessage(sessionId, chatId, {
-            role: "assistant",
-            content: finalReply,
-        });
+    await chatRepository.saveChatMessage(sessionId, chatId, {
+        role: "assistant",
+        content: finalReply,
+    });
 
-        return queryResult;
-        
-    } catch (error) {
-        console.error("❌ Error in restaurant discovery reply:", error);
-        
-        // Return fallback response
-        return {
-            isCachedResponse: false,
-            content: "I apologize, but I'm having trouble processing your restaurant request right now. Please try asking about restaurant recommendations, making reservations, or general dining questions."
-        };
-    }
+    return queryResult;
 }
 
 async function visualizeGraph(graph) {

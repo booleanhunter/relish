@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ReservationService } from '#modules/reservations/domain/reservation-service.js';
-import { AppError, HttpStatusCode } from '#lib/errors.js';
+import { AppError, ErrorType, HttpStatusCode } from '#lib/errors.js';
 const router = Router();
 const reservationService = new ReservationService();
 
@@ -93,9 +93,12 @@ router.put('/:reservationId/cancel', async (req, res, next) => {
 
         if (!sessionId) {
             throw new AppError(
-                'MISSING_SESSION_ID',
+                `reservation.${ErrorType.INVALID_INPUT}`,
                 'Session ID is required for authorization',
-                HttpStatusCode.BAD_REQUEST,
+                ErrorType.INVALID_INPUT,
+                {
+                    publicMessage: 'Session ID is required'
+                }
             );
         }
 

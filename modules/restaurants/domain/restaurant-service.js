@@ -1,6 +1,6 @@
 import { RestaurantRepository } from '#modules/restaurants/data/restaurant-repository.js';
 import { UserService } from '#modules/users/domain/user-service.js';
-import { AppError, HttpStatusCode } from '#lib/errors.js';
+import { AppError, ErrorType } from '#lib/errors.js';
 import { generateEmbedding } from '#modules/ai/helpers/embeddings.js';
 
 /**
@@ -22,9 +22,12 @@ export class RestaurantService {
     async getRestaurantById(restaurantId) {
         if (!restaurantId) {
             throw new AppError(
-                'INVALID_RESTAURANT_ID',
+                `restaurant.${ErrorType.INVALID_INPUT}`,
                 'Restaurant ID is required',
-                HttpStatusCode.BAD_REQUEST,
+                ErrorType.INVALID_INPUT,
+                {
+                    publicMessage: 'Restaurant ID is required'
+                }
             );
         }
 
@@ -32,9 +35,13 @@ export class RestaurantService {
 
         if (!restaurant) {
             throw new AppError(
-                'RESTAURANT_NOT_FOUND',
+                `restaurant.${ErrorType.NOT_FOUND}`,
                 `Restaurant with ID ${restaurantId} not found`,
-                HttpStatusCode.NOT_FOUND,
+                ErrorType.NOT_FOUND,
+                {
+                    publicMessage: 'Restaurant not found',
+                    data: { restaurantId }
+                }
             );
         }
 
@@ -111,17 +118,25 @@ export class RestaurantService {
                 return true;
             } else {
                 throw new AppError(
-                    'INVALID_COORDINATES',
+                    `restaurant.${ErrorType.INVALID_INPUT}`,
                     'Invalid latitude or longitude provided',
-                    HttpStatusCode.BAD_REQUEST,
+                    ErrorType.INVALID_INPUT,
+                    {
+                        publicMessage: 'Invalid coordinates provided',
+                        data: { latitude, longitude }
+                    }
                 );
             }
         } else {
             // One is provided but not the other, or wrong type
             throw new AppError(
-                'INVALID_COORDINATES',
-                'Both latitude and longitude must be provided for location filtering',
-                HttpStatusCode.BAD_REQUEST,
+                `restaurant.${ErrorType.INVALID_INPUT}`,
+                'Location filtering requires both coordinates',
+                ErrorType.INVALID_INPUT,
+                {
+                    publicMessage: 'Both latitude and longitude are required',
+                    data: { latitude, longitude }
+                }
             );
         }
     }

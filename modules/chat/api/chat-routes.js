@@ -4,8 +4,8 @@ import {
     endUserSession,
     getChatHistory,
     checkSemanticCache,
-    saveToSemanticCache,
 } from '#modules/chat/domain/chat-service.js';
+import { HttpStatusCode } from '#lib/errors.js';
 
 const router = Router();
 
@@ -95,7 +95,7 @@ router.get('/chat/cache-check', async (req, res, next) => {
         const { query, sessionId } = req.query;
 
         if (!query) {
-            return res.status(400).json({
+            return res.status(HttpStatusCode.BAD_REQUEST).json({
                 success: false,
                 error: 'Missing required parameter: query',
             });

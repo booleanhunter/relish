@@ -1,5 +1,4 @@
 import { createClient } from 'redis';
-import { AppError, HttpStatusCode } from '#lib/errors.js';
 import CONFIG from '#config';
 
 const client = await createClient({
@@ -23,23 +22,14 @@ export class RestaurantRepository {
      * @returns {Promise<Object|null>} Restaurant data or null if not found
      */
     async getRestaurantById(restaurantId) {
-        try {
-            const key = `${this.keyPrefix}${restaurantId}`;
-            const restaurant = await client.hGetAll(key);
+        const key = `${this.keyPrefix}${restaurantId}`;
+        const restaurant = await client.hGetAll(key);
 
-            if (!restaurant || Object.keys(restaurant).length === 0) {
-                return null;
-            }
-
-            return restaurant;
-        } catch (error) {
-            console.error('Error getting restaurant by ID:', error);
-            throw new AppError(
-                'RESTAURANT_FETCH_ERROR',
-                `Failed to fetch restaurant with ID: ${restaurantId}`,
-                HttpStatusCode.INTERNAL_SERVER_ERROR,
-            );
+        if (!restaurant || Object.keys(restaurant).length === 0) {
+            return null;
         }
+
+        return restaurant;
     }
 
     /**

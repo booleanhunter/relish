@@ -1,7 +1,7 @@
 import { ReservationRepository } from '#modules/reservations/data/reservation-repository.js';
 import { UserService } from '#modules/users/domain/user-service.js';
 import { RestaurantService } from '#modules/restaurants/domain/restaurant-service.js';
-import { AppError, HttpStatusCode } from '#lib/errors.js';
+import { AppError, ErrorType } from '#lib/errors.js';
 
 /**
  * Reservation Service - Business logic layer for reservation operations
@@ -80,19 +80,26 @@ export class ReservationService {
     async getReservationById(reservationId) {
         if (!reservationId) {
             throw new AppError(
-                'INVALID_RESERVATION_ID',
+                `reservation.${ErrorType.INVALID_INPUT}`,
                 'Reservation ID is required',
-                HttpStatusCode.BAD_REQUEST,
+                ErrorType.INVALID_INPUT,
+                {
+                    publicMessage: 'Reservation ID is required'
+                }
             );
         }
 
         const reservation = await this.reservationRepository.getReservationById(reservationId);
-        
+
         if (!reservation) {
             throw new AppError(
-                'RESERVATION_NOT_FOUND',
+                `reservation.${ErrorType.NOT_FOUND}`,
                 `Reservation with ID ${reservationId} not found`,
-                HttpStatusCode.NOT_FOUND,
+                ErrorType.NOT_FOUND,
+                {
+                    publicMessage: 'Reservation not found',
+                    data: { reservationId }
+                }
             );
         }
 
@@ -120,9 +127,12 @@ export class ReservationService {
     async getSessionReservations(sessionId) {
         if (!sessionId) {
             throw new AppError(
-                'INVALID_SESSION_ID',
+                `reservation.${ErrorType.INVALID_INPUT}`,
                 'Session ID is required',
-                HttpStatusCode.BAD_REQUEST,
+                ErrorType.INVALID_INPUT,
+                {
+                    publicMessage: 'Session ID is required'
+                }
             );
         }
 
@@ -169,9 +179,12 @@ export class ReservationService {
     async cancelReservation(reservationId, sessionId) {
         if (!reservationId || !sessionId) {
             throw new AppError(
-                'INVALID_PARAMETERS',
+                `reservation.${ErrorType.INVALID_INPUT}`,
                 'Reservation ID and Session ID are required',
-                HttpStatusCode.BAD_REQUEST,
+                ErrorType.INVALID_INPUT,
+                {
+                    publicMessage: 'Reservation ID and Session ID are required'
+                }
             );
         }
 
@@ -179,35 +192,51 @@ export class ReservationService {
 
         if (!reservation) {
             throw new AppError(
-                'RESERVATION_NOT_FOUND',
+                `reservation.${ErrorType.NOT_FOUND}`,
                 `Reservation with ID ${reservationId} not found`,
-                HttpStatusCode.NOT_FOUND,
+                ErrorType.NOT_FOUND,
+                {
+                    publicMessage: 'Reservation not found',
+                    data: { reservationId }
+                }
             );
         }
 
         // Check if reservation belongs to session
         if (reservation.sessionId !== sessionId) {
             throw new AppError(
-                'UNAUTHORIZED_CANCELLATION',
+                `reservation.${ErrorType.FORBIDDEN}`,
                 'You can only cancel your own reservations',
-                HttpStatusCode.FORBIDDEN,
+                ErrorType.FORBIDDEN,
+                {
+                    publicMessage: 'You can only cancel your own reservations',
+                    data: { reservationId, sessionId }
+                }
             );
         }
 
         // Check if reservation can be cancelled
         if (reservation.status === 'cancelled') {
             throw new AppError(
-                'ALREADY_CANCELLED',
+                `reservation.${ErrorType.CONFLICT}`,
                 'Reservation is already cancelled',
-                HttpStatusCode.CONFLICT,
+                ErrorType.CONFLICT,
+                {
+                    publicMessage: 'Reservation is already cancelled',
+                    data: { reservationId, status: reservation.status }
+                }
             );
         }
 
         if (reservation.status === 'completed') {
             throw new AppError(
-                'CANNOT_CANCEL_COMPLETED',
+                `reservation.${ErrorType.CONFLICT}`,
                 'Cannot cancel a completed reservation',
-                HttpStatusCode.CONFLICT,
+                ErrorType.CONFLICT,
+                {
+                    publicMessage: 'Cannot cancel a completed reservation',
+                    data: { reservationId, status: reservation.status }
+                }
             );
         }
 
@@ -218,9 +247,13 @@ export class ReservationService {
 
         if (hoursUntilReservation < 2) {
             throw new AppError(
-                'CANCELLATION_TOO_LATE',
+                `reservation.${ErrorType.CONFLICT}`,
                 'Reservations must be cancelled at least 2 hours in advance',
-                HttpStatusCode.CONFLICT,
+                ErrorType.CONFLICT,
+                {
+                    publicMessage: 'Reservations must be cancelled at least 2 hours in advance',
+                    data: { reservationId, hoursUntilReservation }
+                }
             );
         }
 
@@ -250,9 +283,13 @@ export class ReservationService {
         // Check if reservation is already cancelled
         if (reservationData.reservation.status === 'cancelled') {
             throw new AppError(
-                'ALREADY_CANCELLED',
+                `reservation.${ErrorType.CONFLICT}`,
                 'This reservation has already been cancelled',
-                HttpStatusCode.BAD_REQUEST,
+                ErrorType.CONFLICT,
+                {
+                    publicMessage: 'This reservation has already been cancelled',
+                    data: { reservationId, status: reservationData.reservation.status }
+                }
             );
         }
 

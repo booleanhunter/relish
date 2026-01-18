@@ -1,11 +1,6 @@
-import OpenAI from 'openai';
 import ChatRepository from '#modules/chat/data/chat-repository.js';
 import { runRestaurantAgentWorkflow } from '#modules/ai/agentic-restaurant-workflow/index.js';
 import CONFIG from '#config';
-
-const openaiClient = new OpenAI({
-    apiKey: CONFIG.openAiApiKey,
-});
 
 const chatRepository = new ChatRepository();
 
@@ -17,18 +12,8 @@ const chatRepository = new ChatRepository();
  * @param {boolean} useSmartRecall - Whether to use smart recall caching
  */
 export async function processRestaurantInquiry(sessionId, chatId, message, useSmartRecall) {
-    try {
-        // Use the agentic restaurant workflow
-        return await runRestaurantAgentWorkflow(sessionId, chatId, message, useSmartRecall);
-    } catch (error) {
-        console.error('❌ Error in restaurant inquiry processing:', error);
-
-        // Fallback to simple response
-        return {
-            isCachedResponse: false,
-            content: "I apologize, but I'm having trouble processing your restaurant request right now. Please try asking about restaurant recommendations, making reservations, or general dining questions.",
-        };
-    }
+    // run agentic restaurant workflow
+    return await runRestaurantAgentWorkflow(sessionId, chatId, message, useSmartRecall);
 }
 
 /**

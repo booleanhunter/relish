@@ -93,9 +93,8 @@ export class RestaurantApp {
                 }
             },
             onError: (error) => {
-                console.error('Error sending message:', error);
                 this.chatWindow.hideTypingIndicator();
-                this.chatWindow.addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                this.chatWindow.addMessage(error.message, 'assistant');
             }
         });
 
