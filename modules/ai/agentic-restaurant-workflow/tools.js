@@ -207,11 +207,11 @@ export const getUserReservationsTool = tool(
  * Cancel an existing reservation for the user
  */
 export const cancelReservationTool = tool(
-    async ({ reservationId }) => {
-        console.log(`❌ Canceling reservation: ${reservationId}`);
+    async ({ sessionId, reservationId }) => {
+        console.log(`❌ Canceling reservation: ${reservationId} for session: ${sessionId}`);
 
         try {
-            const result = await reservationService.cancelReservation(reservationId);
+            const result = await reservationService.cancelReservation(reservationId, sessionId);
 
             return JSON.stringify({
                 success: true,
@@ -232,6 +232,7 @@ export const cancelReservationTool = tool(
         name: "cancel_reservation",
         description: "❌ CANCEL RESERVATION - Cancel an existing reservation. Use ONLY with a valid reservation ID from a previous reservation list. ALWAYS call get_user_reservations first to get valid reservation IDs.",
         schema: z.object({
+            sessionId: z.string().describe("User session ID for authorization"),
             reservationId: z.string().describe("Exact reservation ID from previous reservation list (e.g., 'reservation_abc123')")
         })
     }

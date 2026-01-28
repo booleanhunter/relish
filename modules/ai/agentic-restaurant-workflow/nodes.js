@@ -182,7 +182,7 @@ Make responses helpful, engaging, and easy to interact with!`;
                 if (tool) {
                     // Add sessionId to tool arguments if needed
                     const toolArgs = { ...toolCall.args };
-                    if (['make_reservation', 'get_user_reservations'].includes(toolCall.name)) {
+                    if (['make_reservation', 'get_user_reservations', 'cancel_reservation'].includes(toolCall.name)) {
                         toolArgs.sessionId = state.sessionId;
                     }
 

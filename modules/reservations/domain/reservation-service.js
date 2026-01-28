@@ -174,7 +174,7 @@ export class ReservationService {
      * Cancel a reservation
      * @param {string} reservationId - Reservation ID
      * @param {string} sessionId - Session ID (for authorization)
-     * @returns {Promise<Object>} Cancelled reservation
+     * @returns {Promise<Object>} Cancelled reservation with restaurant details
      */
     async cancelReservation(reservationId, sessionId) {
         if (!reservationId || !sessionId) {
@@ -240,68 +240,43 @@ export class ReservationService {
             );
         }
 
-        // Check cancellation time policy (e.g., must cancel at least 2 hours before)
+        // Check cancellation time policy (e.g., must cancel at least 15 minutes before)
         const reservationDateTime = new Date(`${reservation.date} ${reservation.time}`);
         const now = new Date();
-        const hoursUntilReservation = (reservationDateTime - now) / (1000 * 60 * 60);
+        const minutesUntilReservation = (reservationDateTime - now) / (1000 * 60);
 
-        if (hoursUntilReservation < 2) {
+        if (minutesUntilReservation < 15) {
             throw new AppError(
                 `reservation.${ErrorType.CONFLICT}`,
-                'Reservations must be cancelled at least 2 hours in advance',
+                'Reservations must be cancelled at least 15 minutes in advance',
                 ErrorType.CONFLICT,
                 {
-                    publicMessage: 'Reservations must be cancelled at least 2 hours in advance',
-                    data: { reservationId, hoursUntilReservation }
+                    publicMessage: 'Reservations must be cancelled at least 15 minutes in advance',
+                    data: { reservationId, minutesUntilReservation }
                 }
             );
         }
 
-        // Cancel the reservation by updating status directly
-        const cancelledReservation = {
-            ...reservation,
-            status: 'cancelled',
-            cancelledAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-        };
-
-        // Update the reservation in Redis directly
-        await this.reservationRepository.updateReservation(reservationId, cancelledReservation);
-
-        return cancelledReservation;
-    }
-
-    /**
-     * Cancel a reservation
-     * @param {string} reservationId - Reservation ID to cancel
-     * @returns {Promise<Object>} Cancelled reservation details
-     */
-    async cancelReservation(reservationId) {
-        // Get the reservation first to verify it exists
-        const reservationData = await this.getReservationById(reservationId);
-
-        // Check if reservation is already cancelled
-        if (reservationData.reservation.status === 'cancelled') {
-            throw new AppError(
-                `reservation.${ErrorType.CONFLICT}`,
-                'This reservation has already been cancelled',
-                ErrorType.CONFLICT,
-                {
-                    publicMessage: 'This reservation has already been cancelled',
-                    data: { reservationId, status: reservationData.reservation.status }
-                }
-            );
-        }
-
-        // Cancel the reservation
+        // Cancel the reservation using updateReservationStatus with cancelledAt metadata
         const cancelledReservation = await this.reservationRepository.updateReservationStatus(
             reservationId,
+            reservation,
             'cancelled',
         );
 
+        // Get restaurant details for response
+        const restaurant = await this.restaurantService.getRestaurantById(reservation.restaurantId);
+
         return {
             reservation: cancelledReservation,
-            restaurant: reservationData.restaurant,
+            restaurant: {
+                id: restaurant.id,
+                name: restaurant.name,
+                cuisine: restaurant.cuisine,
+                address: restaurant.address,
+                city: restaurant.city,
+                locality: restaurant.locality,
+            }
         };
     }
 

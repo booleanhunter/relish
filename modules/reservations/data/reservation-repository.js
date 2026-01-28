@@ -59,21 +59,6 @@ export class ReservationRepository {
     }
 
     /**
-     * Update a reservation
-     * @param {string} reservationId - Reservation ID
-     * @param {Object} reservationData - Updated reservation data
-     * @returns {Promise<Object>} Updated reservation
-     */
-    async updateReservation(reservationId, reservationData) {
-        const flatData = {
-            ...reservationData,
-            updatedAt: new Date().toISOString()
-        };
-        await client.hSet(`${this.keyPrefix}${reservationId}`, flatData);
-        return flatData;
-    }
-
-    /**
      * Get reservations by session ID
      * @param {string} sessionId - Session ID
      * @returns {Promise<Array>} Array of reservations
@@ -107,27 +92,14 @@ export class ReservationRepository {
     /**
      * Update reservation status
      * @param {string} reservationId - Reservation ID
+     * @param {Object} currentReservation - Current reservation object (to avoid redundant fetch)
      * @param {string} status - New status (confirmed, cancelled, completed)
      * @returns {Promise<Object>} Updated reservation
      */
-    async updateReservationStatus(reservationId, status) {
-        const reservation = await this.getReservationById(reservationId);
-
-        if (!reservation) {
-            throw new AppError(
-                `reservation.${ErrorType.NOT_FOUND}`,
-                `Reservation with ID ${reservationId} not found`,
-                ErrorType.NOT_FOUND,
-                {
-                    publicMessage: 'Reservation not found',
-                    data: { reservationId }
-                }
-            );
-        }
-
+    async updateReservationStatus(reservationId, currentReservation, status) {
         // Update the status and updatedAt timestamp
         const updatedReservation = {
-            ...reservation,
+            ...currentReservation,
             status: status,
             updatedAt: new Date().toISOString()
         };
